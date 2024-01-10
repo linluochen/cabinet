@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tools.cabinet.mapper.CabinetWxMenuMapper">
+
+    <resultMap type="CabinetWxMenu" id="CabinetWxMenuResult">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="title" column="title"/>
+        <result property="describes" column="describes"/>
+        <result property="sort" column="sort"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="selectCabinetWxMenuVo">
+        select id, parent_id, title, describes, sort, remark, status
+        from cabinet_wx_menu
+    </sql>
+
+    <select id="selectCabinetWxMenuList" parameterType="CabinetWxMenu" resultMap="CabinetWxMenuResult">
+        <include refid="selectCabinetWxMenuVo"/>
+        <where>
+            <if test="title != null  and title != ''">and title like concat('%', #{title}, '%')</if>
+            <if test="describes != null  and describes != ''">and describes like concat('%', #{describes}, '%')</if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectCabinetWxMenuById" parameterType="Long" resultMap="CabinetWxMenuResult">
+        <include refid="selectCabinetWxMenuVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCabinetWxMenu" parameterType="CabinetWxMenu" useGeneratedKeys="true" keyProperty="id">
+        insert into cabinet_wx_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="title != null">title,</if>
+            <if test="describes != null">describes,</if>
+            <if test="sort != null">sort,</if>
+            <if test="remark != null">remark,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="describes != null">#{describes},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCabinetWxMenu" parameterType="CabinetWxMenu">
+        update cabinet_wx_menu
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="describes != null">describes = #{describes},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCabinetWxMenuById" parameterType="Long">
+        delete
+        from cabinet_wx_menu
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteCabinetWxMenuByIds" parameterType="String">
+        delete from cabinet_wx_menu where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--
+        2023.08.09 分界线 新增接口信息：“查询微信菜单列表所有父级列表”
+    -->
+    <select id="selectCabinetWxParentMenuList" resultType="java.util.HashMap">
+        select id, title
+        from cabinet_wx_menu
+        where parent_id = 0
+    </select>
+</mapper>

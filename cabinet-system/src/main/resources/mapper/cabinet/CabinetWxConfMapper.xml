@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tools.cabinet.mapper.CabinetWxConfMapper">
+
+    <resultMap type="CabinetWxConf" id="CabinetWxConfResult">
+        <result property="id" column="id"/>
+        <result property="wxMenuId" column="wx_menu_id"/>
+        <result property="wxTitle" column="wx_title"/>
+        <result property="appid" column="appid"/>
+        <result property="secret" column="secret"/>
+        <result property="accessToken" column="access_token"/>
+        <result property="expiresIn" column="expires_in"/>
+        <result property="createTime" column="create_time"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <sql id="selectCabinetWxConfVo">
+        select id,
+               wx_menu_id,
+               wx_title,
+               appid,
+               secret,
+               access_token,
+               expires_in,
+               create_time,
+               type
+        from cabinet_wx_conf
+    </sql>
+
+    <select id="selectCabinetWxConfList" parameterType="CabinetWxConf" resultMap="CabinetWxConfResult">
+        select
+        cwc.id, cwm.title, wx_menu_id, wx_title, appid, secret, access_token, expires_in, create_time, type
+        from cabinet_wx_conf cwc left join cabinet_wx_menu cwm on cwc.wx_menu_id = cwm.id
+        <where>
+            <if test="title != null  and title != ''">and cwm.title = #{title}</if>
+            <if test="wxMenuId != null  and wxMenuId != ''">and cwc.wx_menu_id = #{wxMenuId}</if>
+            <if test="wxTitle != null  and wxTitle != ''">and cwc.wx_title = #{wxTitle}</if>
+            <if test="appid != null  and appid != ''">and cwc.appid = #{appid}</if>
+            <if test="secret != null  and secret != ''">and cwc.secret = #{secret}</if>
+            <if test="accessToken != null ">and cwc.access_token = #{accessToken}</if>
+            <if test="expiresIn != null ">and cwc.expires_in = #{expiresIn}</if>
+            <if test="type != null ">and cwc.type = #{type}</if>
+        </where>
+    </select>
+
+    <select id="selectCabinetWxConfById" parameterType="Long" resultMap="CabinetWxConfResult">
+        <include refid="selectCabinetWxConfVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCabinetWxConf" parameterType="CabinetWxConf" useGeneratedKeys="true" keyProperty="id">
+        insert into cabinet_wx_conf
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="wxMenuId != null">wx_menu_id,</if>
+            <if test="wxTitle != null">wx_title,</if>
+            <if test="appid != null">appid,</if>
+            <if test="secret != null">secret,</if>
+            <if test="accessToken != null">access_token,</if>
+            <if test="expiresIn != null">expires_in,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="type != null">type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="wxMenuId != null">#{wxMenuId},</if>
+            <if test="wxTitle != null">#{wxTitle},</if>
+            <if test="appid != null">#{appid},</if>
+            <if test="secret != null">#{secret},</if>
+            <if test="accessToken != null">#{accessToken},</if>
+            <if test="expiresIn != null">#{expiresIn},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="type != null">#{type},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCabinetWxConf" parameterType="CabinetWxConf">
+        update cabinet_wx_conf
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="wxMenuId != null">wx_menu_id = #{wxMenuId},</if>
+            <if test="wxTitle != null">wx_title = #{wxTitle},</if>
+            <if test="appid != null">appid = #{appid},</if>
+            <if test="secret != null">secret = #{secret},</if>
+            <if test="accessToken != null">access_token = #{accessToken},</if>
+            <if test="expiresIn != null">expires_in = #{expiresIn},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCabinetWxConfById" parameterType="Long">
+        delete
+        from cabinet_wx_conf
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteCabinetWxConfByIds" parameterType="String">
+        delete from cabinet_wx_conf where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tools.cabinet.mapper.CabinetCatalogMapper">
+
+    <resultMap type="CabinetCatalog" id="CabinetCatalogResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="url" column="url"/>
+        <result property="typeId" column="type_id"/>
+        <result property="del" column="del"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createName" column="create_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateName" column="update_name"/>
+    </resultMap>
+
+    <sql id="selectCabinetCatalogVo">
+        select id,
+               name,
+               url,
+               type_id,
+               del,
+               create_time,
+               create_name,
+               update_time,
+               update_name
+        from cabinet_catalog
+    </sql>
+
+    <select id="selectCabinetCatalogList" parameterType="CabinetCatalog" resultMap="CabinetCatalogResult">
+        <include refid="selectCabinetCatalogVo"/>
+        <where>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="url != null  and url != ''">and url = #{url}</if>
+            <if test="typeId != null ">and type_id = #{typeId}</if>
+            <if test="del != null ">and del = #{del}</if>
+            <if test="createName != null  and createName != ''">and create_name like concat('%', #{createName}, '%')
+            </if>
+            <if test="updateName != null  and updateName != ''">and update_name like concat('%', #{updateName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCabinetCatalogById" parameterType="Long" resultMap="CabinetCatalogResult">
+        <include refid="selectCabinetCatalogVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCabinetCatalog" parameterType="CabinetCatalog" useGeneratedKeys="true" keyProperty="id">
+        insert into cabinet_catalog
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="url != null">url,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="del != null">del,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createName != null">create_name,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateName != null">update_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="url != null">#{url},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="del != null">#{del},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createName != null">#{createName},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateName != null">#{updateName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCabinetCatalog" parameterType="CabinetCatalog">
+        update cabinet_catalog
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="typeId != null">type_id = #{typeId},</if>
+            <if test="del != null">del = #{del},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createName != null">create_name = #{createName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateName != null">update_name = #{updateName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCabinetCatalogById" parameterType="Long">
+        delete
+        from cabinet_catalog
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteCabinetCatalogByIds" parameterType="String">
+        delete from cabinet_catalog where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
